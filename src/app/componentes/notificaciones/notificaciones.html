@@ -1,0 +1,8 @@
+<div class="contenedor">
+  @for (aviso of servicio.avisos(); track aviso.id) {
+    <div class="alert {{ clase(aviso.tipo) }} alert-dismissible shadow-sm" role="alert">
+      {{ aviso.texto }}
+      <button type="button" class="btn-close" aria-label="Cerrar" (click)="servicio.quitar(aviso.id)"></button>
+    </div>
+  }
+</div>

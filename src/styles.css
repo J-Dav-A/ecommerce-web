@@ -1,0 +1,11 @@
+/* Estilos globales: aplican a toda la aplicación (los de cada componente solo a ese componente) */
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* El contenido crece y empuja el pie de página hacia abajo */
+app-root > main {
+  flex: 1 0 auto;
+}
