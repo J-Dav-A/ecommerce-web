@@ -1,0 +1,77 @@
+
+<div class="container mt-4">
+  <div class="row justify-content-center">
+    <div class="col-12 col-md-8 col-lg-6">
+
+      <a routerLink="/catalogo" class="btn btn-link px-0 mb-2">
+        <i class="fa-solid fa-arrow-left me-1"></i>Volver al catálogo
+      </a>
+
+      @if (cargandoOferta()) {
+      <div class="text-center py-5">
+        <div class="spinner-border text-primary" role="status"></div>
+      </div>
+      } @else if (errorCarga()) {
+      <div class="alert alert-danger" role="alert">{{ errorCarga() }}</div>
+      } @else if (oferta(); as o) {
+      <div class="card shadow-sm">
+        <div class="card-header">
+          <h1 class="h5 mb-0">
+            <i class="fa-solid fa-cart-shopping me-2"></i>Confirmar compra
+          </h1>
+        </div>
+        <div class="card-body">
+
+          <h2 class="h4">{{ o.titulo }}</h2>
+          <p class="mb-1">
+            <span class="badge text-bg-primary">{{ o.plataforma }}</span>
+          </p>
+          <p class="fs-4 fw-bold">
+            {{ o.precioValor | number:'1.2-2' }} {{ o.precioMoneda }}
+          </p>
+
+          <form [formGroup]="compraForm" (ngSubmit)="onSubmit()" novalidate>
+
+            <div class="mb-3">
+              <label for="ofertaId" class="form-label">Código de la oferta</label>
+              <input id="ofertaId" type="text" class="form-control"
+                     formControlName="ofertaId" readonly>
+            </div>
+
+            <div class="form-check mb-3">
+              <input id="acepta" type="checkbox" class="form-check-input"
+                     formControlName="acepta"
+                     [class.is-invalid]="acepta.invalid && acepta.touched">
+              <label for="acepta" class="form-check-label">
+                Confirmo que quiero comprar esta clave digital.
+              </label>
+              @if (acepta.invalid && acepta.touched) {
+              <div class="invalid-feedback">
+                Debes confirmar la compra para continuar.
+              </div>
+              }
+            </div>
+
+            @if (errorMensaje()) {
+            <div class="alert alert-danger py-2" role="alert">
+              {{ errorMensaje() }}
+            </div>
+            }
+
+            <!-- Se deshabilita mientras se envía para evitar comprar dos veces -->
+            <button type="submit" class="btn btn-primary w-100"
+                    [disabled]="enviando()">
+              @if (enviando()) {
+              <span class="spinner-border spinner-border-sm me-2"
+                    aria-hidden="true"></span>Procesando...
+              } @else {
+              Comprar ahora
+              }
+            </button>
+          </form>
+        </div>
+      </div>
+      }
+    </div>
+  </div>
+</div>

@@ -1,9 +1,10 @@
-// Espejo de RegistrarCompraRequest (el comprador sale del token, no del cuerpo)
+
 export interface RegistrarCompraRequest {
   ofertaId: string;
+  compradorId: string;
 }
 
-// Espejo de CompraDetalleResponse
+// Espejo de CompraDetalleResponse del backend
 export interface Compra {
   id: string;
   ofertaId: string;
