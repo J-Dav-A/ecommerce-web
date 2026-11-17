@@ -26,6 +26,19 @@
           </a>
         </li>
         <!-- Las opciones privadas se agregan aquí dentro de @if (auth.isAuthenticated()) { ... } -->
+
+        @if (auth.rol() === 'COMPRADOR') {
+        <li class="nav-item">
+          <a
+            routerLink="/favoritos"
+            routerLinkActive="active"
+            class="nav-link">
+            <i class="fa-solid fa-heart me-1"></i>
+            Favoritos
+          </a>
+        </li>
+        }
+
       </ul>
 
       <div class="d-flex align-items-center gap-2">
