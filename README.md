@@ -96,3 +96,14 @@ src/app/
 ## Flujo de trabajo con Git
 
 Ramas `main`, `feature/juan` y `feature/erwin`. Cada integrante trabaja en su rama y los cambios llegan a `main` por Pull Request.
+
+## Extras implementados
+- Búsqueda reactiva con Signals: búsqueda + plataforma + orden + página combinadas (catalogo.ts).
+- Guard por rol: /vendedor (VENDEDOR); /favoritos y /mis-compras (COMPRADOR).
+- MariaDB con Docker (docker-compose.yml del backend, puerto 3307).
+- Imágenes en Cloudinary (subida firmada por el backend).
+- Buenas prácticas: variables de entorno (src/environments, CORS_ORIGENES, CLOUDINARY_*), carpetas por funcionalidad, componentes pequeños.
+- Otra funcionalidad: Mis compras (confirmar y reembolso).
+
+## Usuarios de prueba
+admin@ecommerce.com / clave123 (VENDEDOR) · juan@gmail.com / clave123 (COMPRADOR)
