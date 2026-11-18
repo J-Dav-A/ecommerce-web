@@ -1,0 +1,51 @@
+<div class="container mt-4">
+  <h1 class="h3 mb-4"><i class="fa-solid fa-receipt me-2"></i>Mis compras</h1>
+
+  @if (cargando()) {
+    <div class="text-center py-5"><div class="spinner-border text-primary" role="status"></div></div>
+  } @else if (error()) {
+    <div class="alert alert-danger">{{ error() }}</div>
+  } @else if (compras().length === 0) {
+    <div class="text-center py-5">
+      <p class="lead">Aún no has comprado nada.</p>
+      <a routerLink="/catalogo" class="btn btn-primary">Ir al catálogo</a>
+    </div>
+  } @else {
+    <div class="list-group shadow-sm">
+      @for (c of compras(); track c.id) {
+        <div class="list-group-item">
+          <div class="d-flex flex-column flex-md-row justify-content-between gap-2">
+            <div>
+              <div class="fw-semibold">Compra {{ c.id }}</div>
+              <small class="text-muted">{{ c.fechaCompra | date:'medium' }} · Oferta {{ c.ofertaId }}</small>
+            </div>
+            <div class="d-flex align-items-center gap-2 flex-wrap">
+              <span class="fw-bold">{{ c.montoPrecio | number:'1.2-2' }}</span>
+              <span class="badge"
+                    [class.text-bg-warning]="c.estado === 'PENDIENTE'"
+                    [class.text-bg-success]="c.estado === 'COMPLETADA'"
+                    [class.text-bg-secondary]="c.estado === 'REEMBOLSADA'">{{ c.estado }}</span>
+              @if (c.estado === 'PENDIENTE') {
+                <button type="button" class="btn btn-success btn-sm"
+                        [disabled]="trabajando() === c.id" (click)="confirmar(c)">Confirmar</button>
+              }
+              @if (c.estado === 'COMPLETADA') {
+                <button type="button" class="btn btn-outline-danger btn-sm"
+                        [disabled]="trabajando() === c.id" (click)="abrirReembolso(c)">Reembolso</button>
+              }
+            </div>
+          </div>
+
+          @if (reembolsando() === c.id) {
+            <div class="input-group mt-3">
+              <input type="text" class="form-control" placeholder="Motivo del reembolso"
+                     [(ngModel)]="motivo" name="motivo-{{ c.id }}">
+              <button type="button" class="btn btn-danger" (click)="enviarReembolso(c)">Enviar</button>
+              <button type="button" class="btn btn-outline-secondary" (click)="reembolsando.set(null)">Cancelar</button>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>

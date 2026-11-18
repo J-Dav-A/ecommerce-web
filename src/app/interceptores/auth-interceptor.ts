@@ -2,6 +2,7 @@ import { inject } from '@angular/core';
 import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { catchError, throwError } from 'rxjs';
+import { API_URL } from '../config';
 import { AuthService } from '../servicios/auth';
 import { NotificacionesService } from '../servicios/notificaciones';
 
@@ -13,8 +14,9 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const avisos = inject(NotificacionesService);
   const token = auth.getToken();
 
-  // 1) Si hay sesión, agrega Authorization: Bearer <token>
-  const peticion = token
+  // 1) Si hay sesión y la petición va a NUESTRA API, agrega Authorization: Bearer <token>
+  //    (a servicios externos como Cloudinary nunca se les manda el token)
+  const peticion = token && req.url.startsWith(API_URL)
     ? req.clone({ setHeaders: { Authorization: `Bearer ${token}` } })
     : req;
 

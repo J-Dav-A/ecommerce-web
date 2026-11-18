@@ -7,7 +7,7 @@ import { OfertasService } from '../../servicios/ofertas';
 import { FavoritosService } from '../../servicios/favoritos';
 import { AuthService } from '../../servicios/auth';
 import { NotificacionesService } from '../../servicios/notificaciones';
-import { Oferta, Pagina } from '../../modelos/catalogo';
+import { Oferta, OrdenCatalogo, Pagina, Plataforma } from '../../modelos/catalogo';
 
 @Component({
   selector: 'app-catalogo',
@@ -25,6 +25,17 @@ export class Catalogo {
   readonly tamano = 6;
   pagina = signal(0);   // el backend cuenta las páginas desde 0
   texto = signal('');   // lo que la persona escribe, tecla por tecla
+  plataforma = signal<Plataforma | ''>('');   // filtro por plataforma ('' = todas)
+  orden = signal<OrdenCatalogo | ''>('');     // criterio de orden ('' = el del backend)
+
+  readonly plataformas: Plataforma[] = ['PC', 'PLAYSTATION', 'XBOX', 'NINTENDO'];
+  readonly ordenes: { valor: OrdenCatalogo; etiqueta: string }[] = [
+    { valor: 'NOMBRE', etiqueta: 'Nombre (A-Z)' },
+    { valor: 'PRECIO_ASC', etiqueta: 'Precio: menor a mayor' },
+    { valor: 'PRECIO_DESC', etiqueta: 'Precio: mayor a menor' },
+    { valor: 'POPULARIDAD', etiqueta: 'Más populares' },
+    { valor: 'CALIFICACION', etiqueta: 'Mejor calificados' },
+  ];
 
   cargando = signal(true);
   error = signal('');
@@ -41,10 +52,13 @@ export class Catalogo {
     { initialValue: '' }
   );
 
-  // Junta página y búsqueda en un solo objeto: cuando cualquiera cambia, se vuelve a consultar
+  // Junta página, búsqueda y filtros en un solo objeto: cuando CUALQUIERA cambia, se vuelve a consultar.
+  // Es el punto donde las señales se combinan (búsqueda + plataforma + orden + página).
   private consulta = computed(() => ({
     pagina: this.pagina(),
-    busqueda: this.busqueda()
+    busqueda: this.busqueda(),
+    plataforma: this.plataforma(),
+    orden: this.orden()
   }));
 
   // switchMap cancela la petición anterior si llega una nueva (nunca se muestra una respuesta vieja).
@@ -56,7 +70,7 @@ export class Catalogo {
         this.error.set('');
       }),
       switchMap(c =>
-        this.ofertasService.listar({ busqueda: c.busqueda, page: c.pagina, size: this.tamano }).pipe(
+        this.ofertasService.listar({ busqueda: c.busqueda, plataforma: c.plataforma, orden: c.orden, page: c.pagina, size: this.tamano }).pipe(
           tap(() => this.cargando.set(false)),
           catchError(() => {
             this.cargando.set(false);
@@ -91,6 +105,24 @@ export class Catalogo {
 
   escribir(valor: string): void {
     this.texto.set(valor);
+  }
+
+  // Cambiar un filtro siempre vuelve a la primera página
+  elegirPlataforma(valor: string): void {
+    this.plataforma.set(valor as Plataforma | '');
+    this.pagina.set(0);
+  }
+
+  elegirOrden(valor: string): void {
+    this.orden.set(valor as OrdenCatalogo | '');
+    this.pagina.set(0);
+  }
+
+  limpiarFiltros(): void {
+    this.texto.set('');
+    this.plataforma.set('');
+    this.orden.set('');
+    this.pagina.set(0);
   }
 
   anterior(): void {

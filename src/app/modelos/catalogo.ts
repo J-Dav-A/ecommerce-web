@@ -24,3 +24,19 @@ export interface Pagina<T> {
   size: number;
   number: number; // la página empieza en 0
 }
+
+export type OrdenCatalogo = 'NOMBRE' | 'PRECIO_ASC' | 'PRECIO_DESC' | 'POPULARIDAD' | 'CALIFICACION';
+
+// Espejo de PublicarOfertaRequest (el vendedor sale del token)
+export interface PublicarOfertaRequest {
+  titulo: string;
+  precioValor: number;
+  precioMoneda: string;
+  stock: number;
+  plataforma: Plataforma;
+}
+
+// Espejo de EditarOfertaRequest (imagenes reemplaza la galería)
+export interface EditarOfertaRequest extends PublicarOfertaRequest {
+  imagenes?: string[];
+}

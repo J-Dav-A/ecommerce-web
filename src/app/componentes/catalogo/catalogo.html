@@ -1,12 +1,33 @@
 <div class="container mt-4">
 
-  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
-    <h1 class="h3 mb-0"><i class="fa-solid fa-store me-2"></i>Catálogo</h1>
+  <h1 class="h3 mb-3"><i class="fa-solid fa-store me-2"></i>Catálogo</h1>
 
-    <div class="input-group" style="max-width: 420px;">
-      <span class="input-group-text"><i class="fa-solid fa-magnifying-glass"></i></span>
-      <input #caja type="search" class="form-control" placeholder="Escribe para buscar por título"
-             [value]="texto()" (input)="escribir(caja.value)" aria-label="Buscar ofertas">
+  <!-- Filtros: búsqueda + plataforma + orden. Todos son señales y se combinan en una sola consulta al backend -->
+  <div class="row g-2 mb-4">
+    <div class="col-12 col-md-6">
+      <div class="input-group">
+        <span class="input-group-text"><i class="fa-solid fa-magnifying-glass"></i></span>
+        <input #caja type="search" class="form-control" placeholder="Escribe para buscar por título"
+               [value]="texto()" (input)="escribir(caja.value)" aria-label="Buscar ofertas">
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <select class="form-select" aria-label="Filtrar por plataforma"
+              [value]="plataforma()" (change)="elegirPlataforma($any($event.target).value)">
+        <option value="">Todas las plataformas</option>
+        @for (p of plataformas; track p) {
+          <option [value]="p" [selected]="plataforma() === p">{{ p }}</option>
+        }
+      </select>
+    </div>
+    <div class="col-6 col-md-3">
+      <select class="form-select" aria-label="Ordenar por"
+              [value]="orden()" (change)="elegirOrden($any($event.target).value)">
+        <option value="">Orden por defecto</option>
+        @for (o of ordenes; track o.valor) {
+          <option [value]="o.valor" [selected]="orden() === o.valor">{{ o.etiqueta }}</option>
+        }
+      </select>
     </div>
   </div>
 
@@ -24,9 +45,9 @@
     <div class="text-center py-5">
       <i class="fa-regular fa-face-frown fa-2x text-muted mb-2"></i>
       <p class="lead mb-1">No se encontraron ofertas.</p>
-      @if (texto()) {
-        <p class="text-muted">No hay resultados para «{{ texto() }}».</p>
-        <button type="button" class="btn btn-outline-primary btn-sm" (click)="escribir('')">
+      @if (texto() || plataforma() || orden()) {
+        <p class="text-muted">No hay resultados con esos filtros.</p>
+        <button type="button" class="btn btn-outline-primary btn-sm" (click)="limpiarFiltros()">
           Ver todo el catálogo
         </button>
       }
