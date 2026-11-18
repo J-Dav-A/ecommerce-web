@@ -1,0 +1,9 @@
+
+.imagen-oferta {
+  height: 160px;
+  object-fit: cover;
+}
+
+.sin-imagen {
+  height: 160px;
+}

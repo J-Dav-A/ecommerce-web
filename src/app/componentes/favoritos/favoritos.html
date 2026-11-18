@@ -1,0 +1,82 @@
+
+<div class="container mt-4">
+  <h1 class="h3 mb-4">
+    <i class="fa-solid fa-heart text-danger me-2"></i>
+    Mis favoritos
+  </h1>
+
+  @if (error()) {
+  <div class="alert alert-danger" role="alert">
+    {{ error() }}
+  </div>
+  }
+
+  @if (cargando()) {
+  <div class="text-center py-5">
+    <div class="spinner-border text-primary" role="status"></div>
+  </div>
+  } @else if (!error() && favoritos().length === 0) {
+  <div class="text-center py-5">
+    <i class="fa-regular fa-heart fa-2x text-muted mb-2"></i>
+    <p class="lead mb-2">Aún no tienes favoritos.</p>
+    <a routerLink="/catalogo" class="btn btn-primary">
+      Explorar el catálogo
+    </a>
+  </div>
+  } @else {
+  <div class="row g-4">
+    @for (oferta of favoritos(); track oferta.id) {
+    <div class="col-12 col-sm-6 col-lg-4">
+      <div class="card h-100 shadow-sm">
+
+        @if (oferta.imagenPrincipal) {
+        <img
+          [src]="oferta.imagenPrincipal"
+          class="card-img-top imagen-oferta"
+          [alt]="oferta.titulo">
+        } @else {
+        <div class="sin-imagen bg-light d-flex align-items-center justify-content-center text-muted">
+          <i class="fa-solid fa-gamepad fa-3x"></i>
+        </div>
+        }
+
+        <div class="card-body d-flex flex-column">
+          <h2 class="h5 card-title">
+            {{ oferta.titulo }}
+          </h2>
+
+          <p class="mb-2">
+                <span class="badge text-bg-primary">
+                  {{ oferta.plataforma }}
+                </span>
+          </p>
+
+          <p class="fs-5 fw-bold mt-auto mb-3">
+            {{ oferta.precioValor | number:'1.2-2' }}
+            {{ oferta.precioMoneda }}
+          </p>
+
+          <div class="d-flex gap-2">
+            <a
+              [routerLink]="['/comprar', oferta.id]"
+              class="btn btn-primary flex-fill">
+              Comprar
+            </a>
+
+            <button
+              type="button"
+              class="btn btn-outline-danger"
+              (click)="quitar(oferta)"
+              aria-label="Quitar de favoritos"
+              title="Quitar de favoritos">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    }
+  </div>
+  }
+</div>

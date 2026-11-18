@@ -1,9 +1,12 @@
+
 import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
-import { AuthService } from '../servicios/auth';
 
-// Deja pasar solo a quien tiene sesión; si no, lo manda al login.
-// Ojo: es una comodidad para el usuario. La seguridad real la pone el backend, que valida el token en cada petición.
+import { AuthService } from '../servicios/auth';
+import { NotificacionesService } from '../servicios/notificaciones';
+import { Rol } from '../modelos/auth';
+
+// Permite el acceso únicamente a usuarios autenticados.
 export const authGuard: CanActivateFn = () => {
   const auth = inject(AuthService);
   const router = inject(Router);
@@ -11,10 +14,11 @@ export const authGuard: CanActivateFn = () => {
   if (auth.isAuthenticated()) {
     return true;
   }
+
   return router.createUrlTree(['/login']);
 };
 
-// Deja pasar solo a quien NO tiene sesión (se usa en /login: quien ya inició sesión no necesita verlo)
+// Permite el acceso únicamente a usuarios que no han iniciado sesión.
 export const guestGuard: CanActivateFn = () => {
   const auth = inject(AuthService);
   const router = inject(Router);
@@ -22,5 +26,20 @@ export const guestGuard: CanActivateFn = () => {
   if (!auth.isAuthenticated()) {
     return true;
   }
+
+  return router.createUrlTree(['/']);
+};
+
+// Permite el acceso únicamente al rol indicado.
+export const rolGuard = (rol: Rol): CanActivateFn => () => {
+  const auth = inject(AuthService);
+  const router = inject(Router);
+  const avisos = inject(NotificacionesService);
+
+  if (auth.tieneRol(rol)) {
+    return true;
+  }
+
+  avisos.error('No tienes permiso para entrar a esa sección.');
   return router.createUrlTree(['/']);
 };
