@@ -1,10 +1,12 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { API_URL } from '../config';
-import { Oferta, Pagina } from '../modelos/catalogo';
+import { EditarOfertaRequest, Oferta, OrdenCatalogo, Pagina, Plataforma, PublicarOfertaRequest } from '../modelos/catalogo';
 
 export interface FiltrosCatalogo {
   busqueda?: string;
+  plataforma?: Plataforma | '';
+  orden?: OrdenCatalogo | '';
   page?: number;
   size?: number;
 }
@@ -24,7 +26,26 @@ export class OfertasService {
     if (texto) {
       params = params.set('busqueda', texto);
     }
+    if (filtros.plataforma) {
+      params = params.set('plataforma', filtros.plataforma);
+    }
+    if (filtros.orden) {
+      params = params.set('orden', filtros.orden);
+    }
     return this.http.get<Pagina<Oferta>>(this.url, { params });
+  }
+
+  // ---- Solo vendedores (el token lo agrega el interceptor) ----
+  misOfertas() {
+    return this.http.get<Oferta[]>(`${API_URL}/vendedor/ofertas`);
+  }
+
+  publicar(oferta: PublicarOfertaRequest) {
+    return this.http.post<Oferta>(this.url, oferta);
+  }
+
+  editar(id: string, oferta: EditarOfertaRequest) {
+    return this.http.put<Oferta>(`${this.url}/${id}`, oferta);
   }
 
   obtener(id: string) {

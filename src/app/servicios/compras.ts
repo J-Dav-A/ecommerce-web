@@ -12,4 +12,17 @@ export class ComprasService {
   crear(compra: RegistrarCompraRequest) {
     return this.http.post<Compra>(this.url, compra);
   }
+
+  // Historial del comprador autenticado
+  misCompras() {
+    return this.http.get<Compra[]>(this.url);
+  }
+
+  confirmar(id: string) {
+    return this.http.put<void>(`${this.url}/${id}/confirmar`, {});
+  }
+
+  reembolso(id: string, motivo: string) {
+    return this.http.put<void>(`${this.url}/${id}/reembolso`, { motivo });
+  }
 }
